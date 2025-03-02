@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Robokassa WASM Payment</title>
+</head>
+<body>
+<h1>Оплата через Robokassa</h1>
+<input type="number" id="amount" placeholder="Введите сумму">
+<button onclick="generateURL()">Сформировать ссылку</button>
+<div id="result"></div>
+
+<script src="wasm_exec.js"></script>
+<script>
+  const go = new Go();
+  WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject)
+          .then(result => {
+            go.run(result.instance);
+          });
+
+  function generateURL() {
+    const amount = document.getElementById("amount").value;
+    const result = generatePaymentURL(amount);
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = `<a href="${result.url}" target="_blank">Перейти к оплате</a>`;
+  }
+</script>
+</body>
+</html>
